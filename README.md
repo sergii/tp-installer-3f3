@@ -34,11 +34,30 @@ See also:
 ## Setup
 
 1. Clone this repository
-2. Setup dependencies & run the server:
+2. Start PostgreSQL:
+   ```bash
+   docker compose up -d db
+   ```
+3. Setup dependencies & run the server:
    ```bash
    bin/setup
    ```
-3. Open http://localhost:3000
+4. Open http://localhost:3000
+
+The Compose service runs PostgreSQL 18.4 on `localhost:5433`. Development defaults
+are `hire_do` / `hire_do_development` with database `hire_do_development`; override
+them with `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`,
+`POSTGRES_DATABASE`, and `POSTGRES_TEST_DATABASE` as needed. Stop it with `docker compose down` (add `-v` to
+also remove its local database volume).
+
+## Production database configuration
+
+Production uses separate PostgreSQL databases for the primary application, Solid
+Cache, Solid Queue, and Solid Cable. Set `DATABASE_URL`, `CACHE_DATABASE_URL`,
+`QUEUE_DATABASE_URL`, and `CABLE_DATABASE_URL`; all four are required in production.
+These databases can share one PostgreSQL server; they do not require four PostgreSQL
+instances. The configured deployment passes the values as secrets, and `db:prepare`
+applies each database's migrations.
 
 ## Enabling SSR
 

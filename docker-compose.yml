@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:18.4
+    environment:
+      POSTGRES_DB: hire_do_development
+      POSTGRES_USER: hire_do
+      POSTGRES_PASSWORD: hire_do_development
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hire_do -d hire_do_development"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

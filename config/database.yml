@@ -1,40 +1,42 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
-#
+# Rails evaluates this file during the production image's asset precompile. That
+# build intentionally uses SECRET_KEY_BASE_DUMMY and has no database credentials.
+<% production_database_url = lambda do |name|
+     ENV.fetch(name).tap do |url|
+       raise "#{name} must not be blank in production" if url.empty?
+     end
+   end if ENV["RAILS_ENV"] == "production" && !ENV.key?("SECRET_KEY_BASE_DUMMY") %>
+
 default: &default
-  adapter: sqlite3
-  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("POSTGRES_HOST", "127.0.0.1") %>
+  port: <%= ENV.fetch("POSTGRES_PORT", 5433) %>
+  username: <%= ENV.fetch("POSTGRES_USER", "hire_do") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "hire_do_development") %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
 
 development:
   <<: *default
-  database: storage/development.sqlite3
+  database: <%= ENV.fetch("POSTGRES_DATABASE", "hire_do_development") %>
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
+# This database is recreated by the test suite. Keep it separate from development.
 test:
   <<: *default
-  database: storage/test.sqlite3
+  database: <%= ENV.fetch("POSTGRES_TEST_DATABASE", "hire_do_test") %>
 
-# Store production database in the storage/ directory, which by default
-# is mounted as a persistent Docker volume in config/deploy.yml.
 production:
   primary:
     <<: *default
-    database: storage/production.sqlite3
+    url: <%= production_database_url.call("DATABASE_URL") if production_database_url %>
   cache:
     <<: *default
-    database: storage/production_cache.sqlite3
+    url: <%= production_database_url.call("CACHE_DATABASE_URL") if production_database_url %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *default
-    database: storage/production_queue.sqlite3
+    url: <%= production_database_url.call("QUEUE_DATABASE_URL") if production_database_url %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *default
-    database: storage/production_cable.sqlite3
+    url: <%= production_database_url.call("CABLE_DATABASE_URL") if production_database_url %>
     migrations_paths: db/cable_migrate

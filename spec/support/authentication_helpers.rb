@@ -10,18 +10,26 @@ module AuthenticationHelpers
   module Request
     def sign_in(user)
       session = user.sessions.create!
-      cookies[:session_token] = AuthenticationHelpers.signed_cookie(:session_token, session.id)
+      cookies[:session_token] = AuthenticationHelpers.signed_cookie(:session_token, session.typed_id)
     end
 
     def sign_out
       cookies[:session_token] = ""
+    end
+
+    def inertia_component
+      match = response.body.match(%r{<script data-page="app" type="application/json">(.*?)</script>}m)
+      raise "Inertia page payload not found" unless match
+
+      payload = match[1]
+      JSON.parse(payload).fetch("component")
     end
   end
 
   module System
     def sign_in(user)
       session = user.sessions.create!
-      page.driver.set_cookie("session_token", AuthenticationHelpers.signed_cookie(:session_token, session.id))
+      page.driver.set_cookie("session_token", AuthenticationHelpers.signed_cookie(:session_token, session.typed_id))
     end
 
     def sign_out

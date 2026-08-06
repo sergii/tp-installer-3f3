@@ -10,15 +10,10 @@ import {
 import { UserInfo } from "@/components/user-info"
 import { useMobileNavigation } from "@/hooks/use-mobile-navigation"
 import { sessions, settingsProfiles } from "@/routes"
-import type { User } from "@/types"
+import type { Auth } from "@/types"
 
 interface UserMenuContentProps {
-  auth: {
-    session: {
-      id: number
-    }
-    user: User
-  }
+  auth: Auth
 }
 
 export function UserMenuContent({ auth }: UserMenuContentProps) {

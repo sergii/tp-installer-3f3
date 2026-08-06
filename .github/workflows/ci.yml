@@ -120,8 +120,11 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
-      - name: Run tests
-        run: bin/rails db:test:prepare spec
+      - name: Prepare PostgreSQL test schema
+        run: bin/rails db:test:prepare
+
+      - name: Run test suite, including the direct RLS boundary proof
+        run: bin/rspec
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v7

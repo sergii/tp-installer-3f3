@@ -5,5 +5,8 @@ class HomeController < InertiaController
   before_action :perform_authentication
 
   def index
+    return unless Current.user
+
+    redirect_to(Current.user.memberships.active.exists? ? home_path : onboarding_profile_path)
   end
 end

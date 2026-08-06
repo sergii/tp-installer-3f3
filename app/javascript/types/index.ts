@@ -24,10 +24,13 @@ export interface FlashData {
 
 export interface SharedProps {
   auth: Auth
+  organization?: { name: string; slug: string; logo_url?: string | null }
+  portal?: { client: boolean }
+  permissions?: { workspace_admin: boolean }
 }
 
 export interface User {
-  id: number
+  id: string
   name: string
   email: string
   avatar?: string
@@ -38,7 +41,7 @@ export interface User {
 }
 
 export interface Session {
-  id: number
+  id: string
   user_agent: string
   ip_address: string
   created_at: string

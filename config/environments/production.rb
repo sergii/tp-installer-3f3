@@ -34,7 +34,15 @@ Rails.application.configure do
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT with the current request id as a default log tag.
-  config.log_tags = [ :request_id ]
+  # Keep SQL truthful (PostgreSQL receives UUIDs) and make the request's public
+  # session identifier searchable without issuing a second query.
+  config.log_tags = [
+    :request_id,
+    lambda do |request|
+      token = request.cookie_jar.signed[:session_token]
+      "session:#{token}" if token.is_a?(String) && token.start_with?("session_")
+    end
+  ]
   config.logger   = ActiveSupport::TaggedLogging.logger(STDOUT)
 
   # Change to "debug" to log everything (including potentially personally-identifiable information!).

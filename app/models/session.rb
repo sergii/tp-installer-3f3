@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Session < ApplicationRecord
+  include TypedId
+
+  uses_typed_id "session"
+
   belongs_to :user
 
   before_create do

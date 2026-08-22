@@ -7,8 +7,12 @@ export default function AppLogo() {
         <AppLogoIcon className="size-5 fill-current text-white" />
       </div>
       <div className="ml-1 grid flex-1 text-left text-sm">
-        <span className="mb-0.5 truncate leading-tight font-semibold">TeploTEC</span>
-        <span className="truncate text-xs text-muted-foreground">Installation OS</span>
+        <span className="mb-0.5 truncate leading-tight font-semibold">
+          TeploTEC
+        </span>
+        <span className="text-muted-foreground truncate text-xs">
+          Installation OS
+        </span>
       </div>
     </>
   )

@@ -9,22 +9,39 @@ export default function Welcome() {
   return (
     <>
       <Head title="TeploTEC" />
-      <main className="flex min-h-screen items-center justify-center bg-background p-6 text-foreground">
-        <div className="grid w-full max-w-5xl overflow-hidden rounded-2xl border bg-card shadow-sm lg:grid-cols-[1.15fr_0.85fr]">
+      <main className="bg-background text-foreground flex min-h-screen items-center justify-center p-6">
+        <div className="bg-card grid w-full max-w-5xl overflow-hidden rounded-2xl border shadow-sm lg:grid-cols-[1.15fr_0.85fr]">
           <section className="flex flex-col justify-center p-8 md:p-12">
-            <p className="text-sm font-medium text-muted-foreground">TeploTEC</p>
-            <h1 className="mt-2 max-w-xl text-4xl font-semibold tracking-tight md:text-5xl">Installation OS for geothermal projects</h1>
-            <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground">Plan installation work once, then operate it through Today, List, Kanban, ReUI Gantt, Timeline, and the knowledge graph.</p>
+            <p className="text-muted-foreground text-sm font-medium">
+              TeploTEC
+            </p>
+            <h1 className="mt-2 max-w-xl text-4xl font-semibold tracking-tight md:text-5xl">
+              Installation OS for geothermal projects
+            </h1>
+            <p className="text-muted-foreground mt-5 max-w-xl text-base leading-7">
+              Plan installation work once, then operate it through Today, List,
+              Kanban, ReUI Gantt, Timeline, and the knowledge graph.
+            </p>
             <div className="mt-8 flex gap-3">
               {auth.user ? (
-                <Link href={dashboard.index()} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Open dashboard</Link>
+                <Link
+                  href={dashboard.index()}
+                  className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm font-medium"
+                >
+                  Open dashboard
+                </Link>
               ) : (
-                <Link href={sessions.new()} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Sign in</Link>
+                <Link
+                  href={sessions.new()}
+                  className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm font-medium"
+                >
+                  Sign in
+                </Link>
               )}
             </div>
           </section>
-          <section className="flex min-h-80 items-center justify-center bg-muted/40 p-12">
-            <div className="flex size-48 items-center justify-center rounded-3xl border bg-background shadow-sm">
+          <section className="bg-muted/40 flex min-h-80 items-center justify-center p-12">
+            <div className="bg-background flex size-48 items-center justify-center rounded-3xl border shadow-sm">
               <AppLogoIcon className="size-32" />
             </div>
           </section>

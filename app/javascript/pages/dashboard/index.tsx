@@ -28,9 +28,19 @@ type ProjectRow = {
   target_on: string | null
 }
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: "Dashboard", href: "/dashboard" }]
+const breadcrumbs: BreadcrumbItem[] = [
+  { title: "Dashboard", href: "/dashboard" },
+]
 
-export default function Dashboard({ stats, today, projects }: { stats: Stats; today: TaskRow[]; projects: ProjectRow[] }) {
+export default function Dashboard({
+  stats,
+  today,
+  projects,
+}: {
+  stats: Stats
+  today: TaskRow[]
+  projects: ProjectRow[]
+}) {
   const cards = [
     ["Active projects", stats.active_projects],
     ["Open tasks", stats.open_tasks],
@@ -43,61 +53,110 @@ export default function Dashboard({ stats, today, projects }: { stats: Stats; to
       <Head title="Dashboard" />
       <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
         <div>
-          <p className="text-sm text-muted-foreground">TeploTEC Installation OS</p>
-          <h1 className="text-2xl font-semibold tracking-tight">Operations dashboard</h1>
+          <p className="text-muted-foreground text-sm">
+            TeploTEC Installation OS
+          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Operations dashboard
+          </h1>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {cards.map(([label, value]) => (
-            <div key={label} className="rounded-xl border bg-card p-4 shadow-sm">
-              <p className="text-sm text-muted-foreground">{label}</p>
-              <p className="mt-2 text-3xl font-semibold tabular-nums">{value}</p>
+            <div
+              key={label}
+              className="bg-card rounded-xl border p-4 shadow-sm"
+            >
+              <p className="text-muted-foreground text-sm">{label}</p>
+              <p className="mt-2 text-3xl font-semibold tabular-nums">
+                {value}
+              </p>
             </div>
           ))}
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[1.2fr_1fr]">
-          <section className="rounded-xl border bg-card">
+          <section className="bg-card rounded-xl border">
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div>
                 <h2 className="font-semibold">Needs attention</h2>
-                <p className="text-sm text-muted-foreground">In progress, due today, and overdue work</p>
+                <p className="text-muted-foreground text-sm">
+                  In progress, due today, and overdue work
+                </p>
               </div>
-              <Link href="/today" className="text-sm font-medium hover:underline">Open Today</Link>
+              <Link
+                href="/today"
+                className="text-sm font-medium hover:underline"
+              >
+                Open Today
+              </Link>
             </div>
             <div className="divide-y">
-              {today.length === 0 && <p className="p-4 text-sm text-muted-foreground">Nothing urgent right now.</p>}
+              {today.length === 0 && (
+                <p className="text-muted-foreground p-4 text-sm">
+                  Nothing urgent right now.
+                </p>
+              )}
               {today.map((task) => (
-                <div key={task.id} className="flex items-center gap-4 px-4 py-3">
+                <div
+                  key={task.id}
+                  className="flex items-center gap-4 px-4 py-3"
+                >
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{task.title}</p>
-                    <p className="text-sm text-muted-foreground">{task.project}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {task.project}
+                    </p>
                   </div>
-                  <span className="text-xs uppercase tracking-wide text-muted-foreground">{task.status.replaceAll("_", " ")}</span>
-                  <span className="w-12 text-right text-sm tabular-nums">{task.progress}%</span>
+                  <span className="text-muted-foreground text-xs tracking-wide uppercase">
+                    {task.status.replaceAll("_", " ")}
+                  </span>
+                  <span className="w-12 text-right text-sm tabular-nums">
+                    {task.progress}%
+                  </span>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="rounded-xl border bg-card">
+          <section className="bg-card rounded-xl border">
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div>
                 <h2 className="font-semibold">Projects</h2>
-                <p className="text-sm text-muted-foreground">Current installation portfolio</p>
+                <p className="text-muted-foreground text-sm">
+                  Current installation portfolio
+                </p>
               </div>
-              <Link href="/projects" className="text-sm font-medium hover:underline">All projects</Link>
+              <Link
+                href="/projects"
+                className="text-sm font-medium hover:underline"
+              >
+                All projects
+              </Link>
             </div>
             <div className="divide-y">
-              {projects.length === 0 && <p className="p-4 text-sm text-muted-foreground">Create the first project to start planning.</p>}
+              {projects.length === 0 && (
+                <p className="text-muted-foreground p-4 text-sm">
+                  Create the first project to start planning.
+                </p>
+              )}
               {projects.map((project) => (
-                <Link key={project.id} href={`/projects/${project.id}`} className="block px-4 py-3 hover:bg-muted/40">
+                <Link
+                  key={project.id}
+                  href={`/projects/${project.id}`}
+                  className="hover:bg-muted/40 block px-4 py-3"
+                >
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
                       <p className="truncate font-medium">{project.name}</p>
-                      <p className="text-sm text-muted-foreground">{project.code}{project.location ? ` · ${project.location}` : ""}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {project.code}
+                        {project.location ? ` · ${project.location}` : ""}
+                      </p>
                     </div>
-                    <span className="rounded-full border px-2 py-1 text-xs capitalize">{project.status}</span>
+                    <span className="rounded-full border px-2 py-1 text-xs capitalize">
+                      {project.status}
+                    </span>
                   </div>
                 </Link>
               ))}

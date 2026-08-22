@@ -1,5 +1,10 @@
 import { Link } from "@inertiajs/react"
-import { CalendarCheck2, FolderKanban, LayoutDashboard, Network } from "lucide-react"
+import {
+  CalendarCheck2,
+  FolderKanban,
+  LayoutDashboard,
+  Network,
+} from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"

@@ -34,7 +34,7 @@ function parseDate(value: string | null) {
 export function ProjectGantt({ tasks }: { tasks: ProjectTask[] }) {
   const resources = useMemo<GanttResource[]>(
     () => tasks.map((task) => ({ id: task.id, title: task.title })),
-    [tasks]
+    [tasks],
   )
 
   const events = useMemo<GanttEvent[]>(
@@ -59,19 +59,19 @@ export function ProjectGantt({ tasks }: { tasks: ProjectTask[] }) {
           readOnly: true,
         }
       }),
-    [tasks]
+    [tasks],
   )
 
   if (tasks.length === 0) {
     return (
-      <div className="rounded-xl border bg-card p-8 text-sm text-muted-foreground">
+      <div className="bg-card text-muted-foreground rounded-xl border p-8 text-sm">
         Add tasks with dates to build the project schedule.
       </div>
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-card">
+    <div className="bg-card overflow-hidden rounded-xl border">
       <Gantt
         defaultEvents={events}
         resources={resources}

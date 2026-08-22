@@ -76,4 +76,8 @@ Rails.application.configure do
 
   # Enable DNS rebinding protection and allow only the public Project hostname.
   config.hosts = [ "project.teplotec.com" ]
+
+  config.host_authorization = {
+    exclude: ->(request) { request.path == "/up" }
+  }
 end

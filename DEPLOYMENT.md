@@ -87,6 +87,63 @@ PostgreSQL 18 persists at:
 
 inside the Hetzner host and is mounted into `/var/lib/postgresql` in the container.
 
+## Seed the isolated demo workspace
+
+After the first deploy, create a temporary password with at least 12 characters and run the demo seed inside the deployed Rails container:
+
+```bash
+DEMO_PASSWORD='choose-a-temporary-demo-password'
+bin/kamal app exec --reuse "env DEMO_PASSWORD='$DEMO_PASSWORD' bin/rails demo:seed"
+```
+
+The command creates a separate `TeploTEC Demo` organization and these Rails users:
+
+```text
+demo.admin@teplotec.example
+demo.engineer@teplotec.example
+demo.drilling@teplotec.example
+demo.service@teplotec.example
+```
+
+All four use the supplied `DEMO_PASSWORD`. Sign in with `demo.admin@teplotec.example` for the main demo experience.
+
+The demo workspace contains:
+
+- one large active residential geothermal installation with 40+ scheduled tasks
+- realistic parent tasks, milestones, blocked/in-progress/completed work and task dependencies
+- a second project in planning
+- a seasonal service project
+- timeline events
+- a reusable residential geothermal process template
+- 20+ bilingual knowledge entities and semantic links
+
+The demo project descriptions explicitly mark engineering numbers as demo assumptions, not approved design values.
+
+`demo:seed` is intentionally resettable. Running it again deletes and recreates only records inside the `TeploTEC Demo` organization. It does not touch any future production organization or its projects.
+
+Cloudflare Access is still the outer security boundary. The Rails demo credentials only work after the request has already passed Cloudflare Access.
+
+## Local demo
+
+Development `db:seed` uses the same rich demo workspace. By default:
+
+```text
+login:    demo.admin@teplotec.example
+password: TeploTEC-Demo-2026!
+```
+
+Run:
+
+```bash
+bin/rails db:seed
+```
+
+or choose another local password:
+
+```bash
+DEMO_PASSWORD='another-local-demo-password' bin/rails db:seed
+```
+
 ## Normal deployments
 
 ```bash
@@ -108,9 +165,7 @@ bin/kamal console
 
 Cloudflare Access protects the outer boundary. Rails authentication remains enabled inside the application.
 
-Open `https://project.teplotec.com`, authenticate with the Cloudflare account, then create/sign in to the Rails account.
-
-Development demo seeds are intentionally not run in production. Production demo data can be created explicitly after the first user exists.
+Open `https://project.teplotec.com`, authenticate with the Cloudflare account, then sign in to the demo Rails account or create a separate real Rails account.
 
 ## Repository transfer later
 

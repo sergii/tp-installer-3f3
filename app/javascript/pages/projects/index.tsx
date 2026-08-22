@@ -1,11 +1,111 @@
-import { Form, Head, Link } from "@inertiajs/react"
-import Heading from "@/components/heading"
-import { Button } from "@/components/ui/button"
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import AppLayout from "@/layouts/app-layout"
+import { Head, Link, useForm } from "@inertiajs/react"
+import type { FormEvent } from "react"
 
-type Client = { id: string; name: string }
-export default function Projects({ clients, projects }: { clients: Client[]; projects: { id: string; name: string; client: string }[] }) {
-  return <AppLayout breadcrumbs={[{ title: "Projects", href: "/projects" }]}><Head title="Projects" /><div className="max-w-3xl p-6"><Heading title="Projects" description="Client engagements that can contain many roles and technology stacks." />{clients.length === 0 ? <p className="text-muted-foreground">Add a client before creating a project.</p> : <Form action="/projects" method="post" className="mb-8 grid gap-3 sm:grid-cols-3">{({ errors }) => <><Field><FieldLabel htmlFor="name">Project name</FieldLabel><Input id="name" name="name" required /></Field><Field><FieldLabel htmlFor="client_company_id">Client</FieldLabel><select id="client_company_id" name="client_company_id" className="border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm" required>{clients.map((client) => <option key={client.id} value={client.id}>{client.name}</option>)}</select><FieldError errors={errors.client_company_id?.map((message) => ({ message }))} /></Field><Button className="self-end" type="submit">Add project</Button></>}</Form>}<div className="space-y-2">{projects.map((project) => <div key={project.id} className="rounded-lg border p-3"><span className="font-medium">{project.name}</span><span className="text-muted-foreground"> · {project.client}</span></div>)}</div><Button asChild variant="link" className="mt-4 px-0"><Link href="/jobs">Continue to jobs</Link></Button></div></AppLayout>
+import AppLayout from "@/layouts/app-layout"
+import type { BreadcrumbItem } from "@/types"
+
+type Project = {
+  id: string
+  name: string
+  code: string
+  status: string
+  location: string | null
+  target_on: string | null
+  open_tasks: number
+}
+
+const breadcrumbs: BreadcrumbItem[] = [{ title: "Projects", href: "/projects" }]
+
+export default function ProjectsIndex({
+  projects,
+}: {
+  projects: Project[]
+  statuses: string[]
+}) {
+  const form = useForm({ name: "", code: "", location: "", status: "planning" })
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault()
+    form.post("/projects", { onSuccess: () => form.reset() })
+  }
+
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Projects" />
+      <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+        <div>
+          <p className="text-muted-foreground text-sm">
+            Installation portfolio
+          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
+        </div>
+
+        <form
+          onSubmit={submit}
+          className="bg-card grid gap-3 rounded-xl border p-4 md:grid-cols-[1fr_180px_1fr_auto]"
+        >
+          <input
+            className="bg-background h-10 rounded-md border px-3 text-sm"
+            placeholder="Project name"
+            value={form.data.name}
+            onChange={(event) => form.setData("name", event.target.value)}
+            required
+          />
+          <input
+            className="bg-background h-10 rounded-md border px-3 text-sm uppercase"
+            placeholder="Code"
+            value={form.data.code}
+            onChange={(event) => form.setData("code", event.target.value)}
+            required
+          />
+          <input
+            className="bg-background h-10 rounded-md border px-3 text-sm"
+            placeholder="Location"
+            value={form.data.location}
+            onChange={(event) => form.setData("location", event.target.value)}
+          />
+          <button
+            disabled={form.processing}
+            className="bg-primary text-primary-foreground h-10 rounded-md px-4 text-sm font-medium disabled:opacity-50"
+          >
+            Create project
+          </button>
+        </form>
+
+        <div className="bg-card overflow-hidden rounded-xl border">
+          {projects.length === 0 && (
+            <p className="text-muted-foreground p-6 text-sm">
+              No projects yet.
+            </p>
+          )}
+          <div className="divide-y">
+            {projects.map((project) => (
+              <Link
+                key={project.id}
+                href={`/projects/${project.id}`}
+                className="hover:bg-muted/40 grid gap-2 px-4 py-4 md:grid-cols-[120px_1fr_150px_100px_120px] md:items-center"
+              >
+                <span className="text-muted-foreground font-mono text-sm">
+                  {project.code}
+                </span>
+                <div>
+                  <p className="font-medium">{project.name}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {project.location || "Location not set"}
+                  </p>
+                </div>
+                <span className="text-sm capitalize">{project.status}</span>
+                <span className="text-sm tabular-nums">
+                  {project.open_tasks} open
+                </span>
+                <span className="text-muted-foreground text-sm">
+                  {project.target_on || "No target"}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </AppLayout>
+  )
 }

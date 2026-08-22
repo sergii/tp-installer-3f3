@@ -1,20 +1,16 @@
 # frozen_string_literal: true
 
 class Project < ApplicationRecord
-  include TypedId
   include OrganizationScoped
 
-  uses_typed_id "project"
+  STATUSES = %w[planning active paused completed cancelled].freeze
 
+  has_many :tasks, -> { order(:position, :created_at) }, dependent: :destroy
+  has_many :project_events, dependent: :destroy
 
-  belongs_to :client_company
-  has_many :jobs, dependent: :restrict_with_error
-  validates :name, presence: true
-  validate :client_belongs_to_current_organization
+  validates :name, :code, presence: true
+  validates :code, uniqueness: { scope: :organization_id }
+  validates :status, inclusion: { in: STATUSES }
 
-  private
-
-  def client_belongs_to_current_organization
-    errors.add(:client_company, "must belong to the current organization") if client_company && client_company.organization_id != organization_id
-  end
+  scope :active, -> { where(status: %w[planning active paused]) }
 end

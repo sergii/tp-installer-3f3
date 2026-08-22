@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
-# Database migrations run separately via bin/prepare-database with migrator
-# credentials. Long-running web and worker containers receive only the restricted
-# runtime database URLs, so they cannot bypass RLS by becoming schema owners.
+# If running the rails server then create or migrate existing database
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  ./bin/rails db:prepare
+fi
 
 exec "${@}"

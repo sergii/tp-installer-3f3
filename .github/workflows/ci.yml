@@ -24,6 +24,13 @@ jobs:
       - name: Scan for known security vulnerabilities in gems used
         run: bin/bundler-audit
 
+      - name: Validate Kamal deployment configuration
+        env:
+          KAMAL_REGISTRY_PASSWORD: ci-placeholder
+          PROJECT_DB_PASSWORD: ci-placeholder
+          RAILS_MASTER_KEY: ci-placeholder
+        run: bin/kamal config >/dev/null
+
   lint_js:
     runs-on: ubuntu-latest
 
@@ -81,20 +88,20 @@ jobs:
       RAILS_ENV: test
       POSTGRES_HOST: 127.0.0.1
       POSTGRES_PORT: 5432
-      POSTGRES_USER: hire_do
-      POSTGRES_PASSWORD: hire_do_test
-      POSTGRES_TEST_DATABASE: hire_do_test
+      POSTGRES_USER: teplotec
+      POSTGRES_PASSWORD: teplotec_test
+      POSTGRES_TEST_DATABASE: teplotec_test
     services:
       postgres:
         image: postgres:18.4
         env:
-          POSTGRES_DB: hire_do_test
-          POSTGRES_USER: hire_do
-          POSTGRES_PASSWORD: hire_do_test
+          POSTGRES_DB: teplotec_test
+          POSTGRES_USER: teplotec
+          POSTGRES_PASSWORD: teplotec_test
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U hire_do -d hire_do_test"
+          --health-cmd "pg_isready -U teplotec -d teplotec_test"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -120,10 +127,10 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
-      - name: Prepare PostgreSQL test schema
-        run: bin/rails db:test:prepare
+      - name: Prepare test database
+        run: bin/rails db:prepare
 
-      - name: Run test suite, including the direct RLS boundary proof
+      - name: Run tests
         run: bin/rspec
 
       - name: Keep screenshots from failed system tests

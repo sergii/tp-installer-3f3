@@ -1,32 +1,33 @@
 # frozen_string_literal: true
 
 class DashboardController < InertiaController
+  before_action :require_current_organization
+
   def index
+    projects = Current.organization.projects
+    tasks = Current.organization.tasks
+
     render inertia: "dashboard/index", props: {
-      greeting_name: Current.user&.name.to_s.split.first.presence || "there",
       stats: {
-        candidates: Candidate.count,
-        open_jobs: Job.where(status: "open").count,
-        presented: Application.where(stage: "presented").count,
-        clients: ClientCompany.count,
-        tasks_due_today: Task.where(completed_at: nil, due_on: Date.current).count
+        active_projects: projects.active.count,
+        open_tasks: tasks.open.count,
+        due_today: tasks.open.due_today.count,
+        overdue: tasks.overdue.count
       },
-      recent_candidates: Candidate.order(created_at: :desc).limit(5).map do |candidate|
-        {
-          id: candidate.typed_id,
-          name: "#{candidate.first_name} #{candidate.last_name}",
-          skills: candidate.skills,
-          created_at: candidate.created_at.iso8601
-        }
-      end,
-      tasks_due_today: Task.where(completed_at: nil, due_on: Date.current).order(:created_at).limit(3).map { |task| { id: task.typed_id, title: task.title } },
-      projects: Project.includes(:client_company).order(:name).map do |project|
-        {
-          id: project.typed_id,
-          name: project.name,
-          client_name: project.client_company.name
-        }
-      end
+      today: task_rows(tasks.open.where(due_on: ..Date.current).order(:due_on).limit(8)),
+      projects: projects.active.order(updated_at: :desc).limit(6).map { |project| project_row(project) }
     }
+  end
+
+  private
+
+  def task_rows(tasks)
+    tasks.includes(:project).map do |task|
+      task.slice(:id, :title, :status, :progress, :due_on).merge(project: task.project.name)
+    end
+  end
+
+  def project_row(project)
+    project.slice(:id, :name, :code, :status, :location, :target_on)
   end
 end

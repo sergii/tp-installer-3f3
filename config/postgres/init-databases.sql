@@ -1,0 +1,3 @@
+CREATE DATABASE teplotec_project_cache;
+CREATE DATABASE teplotec_project_queue;
+CREATE DATABASE teplotec_project_cable;

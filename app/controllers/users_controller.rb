@@ -11,15 +11,17 @@ class UsersController < InertiaController
   def create
     @user = User.new(user_params)
 
-    if @user.save
-      session_record = @user.sessions.create!
-      cookies.signed.permanent[:session_token] = { value: session_record.typed_id, httponly: true }
-
-      send_email_verification
-      redirect_to onboarding_profile_path, notice: "Welcome! Let's set up your workspace"
-    else
-      redirect_to sign_up_path, inertia: { errors: @user.errors }
+    User.transaction do
+      @user.save!
+      @user.ensure_workspace!
     end
+
+    session_record = @user.sessions.create!
+    cookies.signed.permanent[:session_token] = { value: session_record.id, httponly: true }
+    send_email_verification
+    redirect_to dashboard_path, notice: "Welcome! You have signed up successfully"
+  rescue ActiveRecord::RecordInvalid => error
+    redirect_to sign_up_path, inertia: { errors: error.record.errors }
   end
 
   def destroy

@@ -2,16 +2,15 @@ services:
   db:
     image: postgres:18.4
     environment:
-      POSTGRES_DB: hire_do_development
-      POSTGRES_USER: hire_do
-      POSTGRES_PASSWORD: hire_do_development
+      POSTGRES_DB: teplotec_development
+      POSTGRES_USER: teplotec
+      POSTGRES_PASSWORD: teplotec_development
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
-      - ./docker/postgres/init-app-role.sql:/docker-entrypoint-initdb.d/01-app-role.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hire_do -d hire_do_development"]
+      test: ["CMD-SHELL", "pg_isready -U teplotec -d teplotec_development"]
       interval: 5s
       timeout: 5s
       retries: 5

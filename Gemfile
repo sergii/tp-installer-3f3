@@ -6,11 +6,6 @@ gem "rails", "~> 8.1.3"
 gem "propshaft"
 # Use PostgreSQL as the database for Active Record
 gem "pg", "~> 1.6"
-# Compact, type-prefixed public identifiers backed by UUIDv7 values.
-gem "typeid", "~> 0.2"
-gem "action_policy", "~> 0.7"
-gem "alba", "~> 3.10"
-gem "alba-inertia", "~> 0.1.4"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
@@ -82,5 +77,4 @@ group :test do
   # Synchronize Capybara commands with application JavaScript and AJAX requests
   gem "capybara-lockstep"
   gem "selenium-webdriver"
-  gem "enforceable", path: File.expand_path("/Users/serhii/repos/sergii/enforceable"), require: false
 end

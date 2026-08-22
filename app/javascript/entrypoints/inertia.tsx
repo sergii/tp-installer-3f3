@@ -3,7 +3,7 @@ import { createInertiaApp } from "@inertiajs/react"
 import { initializeTheme } from "@/hooks/use-appearance"
 import PersistentLayout from "@/layouts/persistent-layout"
 
-const appName = import.meta.env.VITE_APP_NAME ?? "Hire.do"
+const appName = import.meta.env.VITE_APP_NAME ?? "TeploTEC Installation OS"
 
 void createInertiaApp({
   title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -23,9 +23,6 @@ void createInertiaApp({
     color: "#4B5563",
   },
 }).catch((error) => {
-  // This ensures this entrypoint is only loaded on Inertia pages
-  // by checking for the presence of the root element (#app by default).
-  // Feel free to remove this `catch` if you don't need it.
   if (document.getElementById("app")) {
     throw error
   } else {
@@ -37,5 +34,4 @@ void createInertiaApp({
   }
 })
 
-// This will set light / dark mode on load...
 initializeTheme()

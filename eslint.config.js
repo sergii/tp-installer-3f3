@@ -9,7 +9,13 @@ import tseslint from "typescript-eslint"
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   { files: ["app/javascript/**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
-  { ignores: ["app/javascript/components/ui/**", "app/javascript/routes/**"] },
+  {
+    ignores: [
+      "app/javascript/components/reui/**",
+      "app/javascript/components/ui/**",
+      "app/javascript/routes/**",
+    ],
+  },
   {
     settings: {
       react: {
@@ -49,7 +55,7 @@ export default [
           ],
           "newlines-between": "always",
           named: true,
-          alphabetize: { order: "asc" },
+          alphabetize: { order: "ignore" },
         },
       ],
       "import/first": "error",
@@ -63,7 +69,9 @@ export default [
           tsx: "never",
         },
       ],
+      "@typescript-eslint/consistent-type-definitions": "off",
       "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
       "react/prop-types": "off",
     },
   },

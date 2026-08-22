@@ -10,4 +10,13 @@ class ProcessStepTemplate < ApplicationRecord
   validates :name, :key, presence: true
   validates :key, uniqueness: { scope: :process_template_id }
   validates :duration_days, numericality: { greater_than: 0 }
+  validate :process_template_matches_organization
+
+  private
+
+  def process_template_matches_organization
+    return unless process_template && organization_id
+
+    errors.add(:process_template, "must belong to the same organization") if process_template.organization_id != organization_id
+  end
 end

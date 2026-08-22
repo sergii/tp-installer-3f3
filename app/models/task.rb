@@ -19,6 +19,8 @@ class Task < ApplicationRecord
   validates :kind, inclusion: { in: KINDS }
   validates :progress, inclusion: { in: 0..100 }
   validate :project_matches_organization
+  validate :parent_matches_project
+  validate :users_belong_to_organization
   validate :dates_are_ordered
 
   scope :open, -> { where.not(status: "done") }
@@ -30,7 +32,28 @@ class Task < ApplicationRecord
   private
 
   def project_matches_organization
-    errors.add(:project, "must belong to the same organization") if project && project.organization_id != organization_id
+    return unless project && organization_id
+
+    errors.add(:project, "must belong to the same organization") if project.organization_id != organization_id
+  end
+
+  def parent_matches_project
+    return unless parent
+
+    errors.add(:parent, "must belong to the same project") if parent.project_id != project_id
+    errors.add(:parent, "must belong to the same organization") if parent.organization_id != organization_id
+  end
+
+  def users_belong_to_organization
+    validate_member(created_by, :created_by)
+    validate_member(assigned_to, :assigned_to)
+  end
+
+  def validate_member(user, attribute)
+    return unless user && organization
+    return if organization.memberships.active.exists?(user_id: user.id)
+
+    errors.add(attribute, "must belong to the task organization")
   end
 
   def dates_are_ordered

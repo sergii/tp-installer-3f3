@@ -8,57 +8,44 @@ on:
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Resolve patched Ruby dependencies
-        run: |
-          bundle config unset deployment
-          bundle update rails json
-      - name: Upload resolved lockfile
-        uses: actions/upload-artifact@v7
-        with:
-          name: resolved-lockfile
-          path: Gemfile.lock
+
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
+
       - name: Scan for known security vulnerabilities in gems used
         run: bin/bundler-audit
 
   lint_js:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
+
       - name: Install JS dependencies
         run: npm ci
+
       - name: Lint JavaScript
         run: npm run lint
-      - name: Format JavaScript
-        run: npm run format:fix
-      - name: Upload formatted application files
-        uses: actions/upload-artifact@v7
-        with:
-          name: formatted-application
-          path: |
-            app/javascript/components/app-logo.tsx
-            app/javascript/components/app-sidebar.tsx
-            app/javascript/components/project-gantt.tsx
-            app/javascript/pages/dashboard/index.tsx
-            app/javascript/pages/home/index.tsx
-            app/javascript/pages/knowledge/index.tsx
-            app/javascript/pages/projects/index.tsx
-            app/javascript/pages/projects/show.tsx
-            app/javascript/pages/today/index.tsx
+
+      - name: Check formatting
+        run: npm run format
+
       - name: Type check
         run: npm run check
 
@@ -69,10 +56,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+
       - name: Prepare RuboCop cache
         uses: actions/cache@v6
         env:
@@ -82,6 +71,7 @@ jobs:
           key: rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-${{ github.ref_name == github.event.repository.default_branch && github.run_id || 'default' }}
           restore-keys: |
             rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-
+
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
@@ -108,26 +98,34 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
+
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git node-gyp pkg-config python-is-python3 google-chrome-stable
+
       - name: Checkout code
         uses: actions/checkout@v7
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
+
       - name: Install JS dependencies
         run: npm ci
+
       - name: Prepare test database
         run: bin/rails db:prepare
+
       - name: Run tests
         run: bin/rspec
+
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v7
         if: failure()

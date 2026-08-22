@@ -30,4 +30,19 @@ class User < ApplicationRecord
   after_update if: :password_digest_previously_changed? do
     sessions.where.not(id: Current.session).delete_all
   end
+
+  def ensure_workspace!
+    memberships.active.includes(:organization).first&.organization || with_lock do
+      memberships.active.includes(:organization).first&.organization || create_personal_workspace!
+    end
+  end
+
+  private
+
+  def create_personal_workspace!
+    base = name.parameterize.presence || "workspace"
+    organization = Organization.create!(name: "#{name}'s workspace", slug: "#{base}-#{id}")
+    memberships.create!(organization:, role: "owner")
+    organization
+  end
 end

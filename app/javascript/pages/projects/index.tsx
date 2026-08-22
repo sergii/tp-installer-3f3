@@ -1,4 +1,4 @@
-import { FormEvent } from "react"
+import type { FormEvent } from "react"
 import { Head, Link, useForm } from "@inertiajs/react"
 
 import AppLayout from "@/layouts/app-layout"
@@ -34,9 +34,9 @@ export default function ProjectsIndex({ projects }: { projects: Project[]; statu
         </div>
 
         <form onSubmit={submit} className="grid gap-3 rounded-xl border bg-card p-4 md:grid-cols-[1fr_180px_1fr_auto]">
-          <input className="h-10 rounded-md border bg-background px-3 text-sm" placeholder="Project name" value={form.data.name} onChange={(e) => form.setData("name", e.target.value)} required />
-          <input className="h-10 rounded-md border bg-background px-3 text-sm uppercase" placeholder="Code" value={form.data.code} onChange={(e) => form.setData("code", e.target.value)} required />
-          <input className="h-10 rounded-md border bg-background px-3 text-sm" placeholder="Location" value={form.data.location} onChange={(e) => form.setData("location", e.target.value)} />
+          <input className="h-10 rounded-md border bg-background px-3 text-sm" placeholder="Project name" value={form.data.name} onChange={(event) => form.setData("name", event.target.value)} required />
+          <input className="h-10 rounded-md border bg-background px-3 text-sm uppercase" placeholder="Code" value={form.data.code} onChange={(event) => form.setData("code", event.target.value)} required />
+          <input className="h-10 rounded-md border bg-background px-3 text-sm" placeholder="Location" value={form.data.location} onChange={(event) => form.setData("location", event.target.value)} />
           <button disabled={form.processing} className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50">Create project</button>
         </form>
 

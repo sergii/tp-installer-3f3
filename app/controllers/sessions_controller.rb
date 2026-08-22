@@ -10,6 +10,7 @@ class SessionsController < InertiaController
 
   def create
     if user = User.authenticate_by(email: params[:email], password: params[:password])
+      user.ensure_workspace!
       @session = user.sessions.create!
       cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true }
 

@@ -13,8 +13,7 @@ class UsersController < InertiaController
 
     User.transaction do
       @user.save!
-      organization = Organization.create!(name: "#{@user.name}'s workspace", slug: available_slug(@user.name))
-      Membership.create!(user: @user, organization:, role: "owner")
+      @user.ensure_workspace!
     end
 
     session_record = @user.sessions.create!
@@ -40,17 +39,6 @@ class UsersController < InertiaController
 
   def user_params
     params.permit(:email, :name, :password, :password_confirmation)
-  end
-
-  def available_slug(name)
-    base = name.parameterize.presence || "workspace"
-    slug = base
-    counter = 2
-    while Organization.exists?(slug:)
-      slug = "#{base}-#{counter}"
-      counter += 1
-    end
-    slug
   end
 
   def send_email_verification

@@ -56,16 +56,6 @@ Rails.application.configure do
   # Append comments with runtime information tags to SQL queries in logs.
   config.active_record.query_log_tags_enabled = true
 
-  # The database still logs the UUID it executes against, while this request tag
-  # gives humans the stable public session identifier without another lookup.
-  config.log_tags = [
-    :request_id,
-    lambda do |request|
-      token = request.cookie_jar.signed[:session_token]
-      "session:#{token}" if token.is_a?(String) && token.start_with?("session_")
-    end
-  ]
-
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 

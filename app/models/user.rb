@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  include TypedId
-
-  uses_typed_id "user"
-
   has_secure_password
 
   generates_token_for :email_verification, expires_in: 2.days do
@@ -16,17 +12,6 @@ class User < ApplicationRecord
   end
 
   has_many :sessions, dependent: :destroy
-  has_many :memberships, dependent: :destroy
-  has_many :organizations, through: :memberships
-  has_many :sent_workspace_invitations, class_name: "WorkspaceInvitation", foreign_key: :invited_by_id, dependent: :destroy
-  has_many :created_tasks, class_name: "Task", foreign_key: :created_by_id, dependent: :destroy
-  has_many :assigned_tasks, class_name: "Task", foreign_key: :assigned_to_id, dependent: :destroy
-  has_many :client_decisions, foreign_key: :decided_by_id, dependent: :restrict_with_error
-  has_many :created_meetings, class_name: "Meeting", foreign_key: :created_by_id, dependent: :restrict_with_error
-
-  def onboarding_completed?
-    onboarding_completed_at.present?
-  end
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

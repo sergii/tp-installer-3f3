@@ -1,7 +1,7 @@
 import { Head, Link, usePage } from "@inertiajs/react"
 
 import AppLogoIcon from "@/components/app-logo-icon"
-import { sessions } from "@/routes"
+import { dashboard, sessions } from "@/routes"
 
 export default function Welcome() {
   const page = usePage()
@@ -22,7 +22,7 @@ export default function Welcome() {
           <nav className="flex items-center justify-end gap-4">
             {auth.user ? (
               <Link
-                href="/home"
+                href={dashboard.index()}
                 className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
               >
                 Dashboard
@@ -44,7 +44,7 @@ export default function Welcome() {
           <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
             <div className="flex-1 rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
               <h1 className="mb-1 font-medium">
-                {import.meta.env.VITE_APP_NAME ?? "Hire.do"}
+                {import.meta.env.VITE_APP_NAME ?? "React Starter Kit"}
               </h1>
               <p className="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
                 Rails + Inertia.js + React + shadcn/ui

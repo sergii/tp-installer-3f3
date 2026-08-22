@@ -1,5 +1,4 @@
 import { Link, usePage } from "@inertiajs/react"
-import { cn } from "@/lib/utils"
 
 import {
   SidebarGroup,
@@ -10,16 +9,10 @@ import {
 } from "@/components/ui/sidebar"
 import type { NavItem } from "@/types"
 
-export function NavMain({
-  items = [],
-  className,
-}: {
-  items: NavItem[]
-  className?: string
-}) {
+export function NavMain({ items = [] }: { items: NavItem[] }) {
   const page = usePage()
   return (
-    <SidebarGroup className={cn("px-2 py-0", className)}>
+    <SidebarGroup className="px-2 py-0">
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (

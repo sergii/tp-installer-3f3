@@ -44,47 +44,11 @@ See also:
    ```
 4. Open http://localhost:3000
 
-The Compose service runs PostgreSQL 18.4 on `localhost:5433`. Rails connects as the
-restricted `hire_do_app` role (password `hire_do_development`) to database
-`hire_do_development`; `bin/setup` uses the `hire_do` migration owner. Override the
-connection with `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`,
+The Compose service runs PostgreSQL 18.4 on `localhost:5433`. Development defaults
+are `hire_do` / `hire_do_development` with database `hire_do_development`; override
+them with `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`,
 `POSTGRES_DATABASE`, and `POSTGRES_TEST_DATABASE` as needed. Stop it with `docker compose down` (add `-v` to
 also remove its local database volume).
-
-The PostgreSQL schema is stored in `db/structure.sql`, not `db/schema.rb`, because
-RLS policies must survive loading a fresh test or staging database. Run the direct
-database proof with:
-
-```bash
-bin/rspec spec/database/row_level_security_spec.rb
-```
-
-To provision or rotate a local/runtime role as the migration owner, run:
-
-```bash
-POSTGRES_USER=hire_do \
-POSTGRES_RUNTIME_PASSWORD=replace-me \
-bin/rails db:provision_runtime_role
-```
-
-The task creates a login role with `NOSUPERUSER` and `NOBYPASSRLS`, then grants only
-application table/sequence access. Do not run it with an application runtime URL.
-
-To erase and reload only the local development database, use the safe reset script:
-
-```bash
-bin/reset-database
-```
-
-It runs migrations and seeds as `hire_do`, then reapplies the grants required by the
-restricted `hire_do_app` web role. Do not use a bare `db:drop db:create` command:
-Docker's one-time initialization script does not rerun after a database recreation.
-
-After setup, sign in internally with `admin@hire.do` and password `HireDoDemo2026!`.
-The development seeds create a TurnKey Staffing workspace with a client, project,
-jobs, and candidates. To verify the client boundary, sign in as
-`client@northstar.example` with the same password and open
-`/client/applications`; that account can see only candidates presented to Northstar.
 
 ## Production database configuration
 
@@ -92,21 +56,8 @@ Production uses separate PostgreSQL databases for the primary application, Solid
 Cache, Solid Queue, and Solid Cable. Set `DATABASE_URL`, `CACHE_DATABASE_URL`,
 `QUEUE_DATABASE_URL`, and `CABLE_DATABASE_URL`; all four are required in production.
 These databases can share one PostgreSQL server; they do not require four PostgreSQL
-instances. These are **runtime** URLs and must point to the restricted application
-role.
-
-Migrate each release from a short-lived migrator environment with separate owner
-URLs; do not inject these values into long-running web or worker containers:
-
-```bash
-DATABASE_MIGRATION_URL=postgresql://migration-owner:... \
-CACHE_DATABASE_MIGRATION_URL=postgresql://migration-owner:... \
-QUEUE_DATABASE_MIGRATION_URL=postgresql://migration-owner:... \
-CABLE_DATABASE_MIGRATION_URL=postgresql://migration-owner:... \
-bin/prepare-database
-```
-
-The runtime image intentionally does not call `db:prepare` on boot.
+instances. The configured deployment passes the values as secrets, and `db:prepare`
+applies each database's migrations.
 
 ## Enabling SSR
 

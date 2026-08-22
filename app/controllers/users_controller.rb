@@ -13,10 +13,10 @@ class UsersController < InertiaController
 
     if @user.save
       session_record = @user.sessions.create!
-      cookies.signed.permanent[:session_token] = { value: session_record.typed_id, httponly: true }
+      cookies.signed.permanent[:session_token] = { value: session_record.id, httponly: true }
 
       send_email_verification
-      redirect_to onboarding_profile_path, notice: "Welcome! Let's set up your workspace"
+      redirect_to dashboard_path, notice: "Welcome! You have signed up successfully"
     else
       redirect_to sign_up_path, inertia: { errors: @user.errors }
     end

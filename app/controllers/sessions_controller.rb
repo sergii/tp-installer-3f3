@@ -11,9 +11,9 @@ class SessionsController < InertiaController
   def create
     if user = User.authenticate_by(email: params[:email], password: params[:password])
       @session = user.sessions.create!
-      cookies.signed.permanent[:session_token] = { value: @session.typed_id, httponly: true }
+      cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true }
 
-      redirect_to(user.memberships.active.exists? ? organizations_path : onboarding_profile_path, notice: "Signed in successfully")
+      redirect_to dashboard_path, notice: "Signed in successfully"
     else
       redirect_to sign_in_path, alert: "That email or password is incorrect"
     end
@@ -28,6 +28,6 @@ class SessionsController < InertiaController
   private
 
   def set_session
-    @session = Current.user.sessions.find(Session.typed_id_value(params[:id]))
+    @session = Current.user.sessions.find(params[:id])
   end
 end

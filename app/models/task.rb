@@ -41,7 +41,7 @@ class Task < ApplicationRecord
     if status == "done"
       self.progress = 100
       self.completed_at ||= Time.current
-    elsif status_changed?
+    elsif will_save_change_to_status?
       self.completed_at = nil
     end
   end

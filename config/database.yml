@@ -11,18 +11,17 @@ default: &default
   encoding: unicode
   host: <%= ENV.fetch("POSTGRES_HOST", "127.0.0.1") %>
   port: <%= ENV.fetch("POSTGRES_PORT", 5433) %>
-  username: <%= ENV.fetch("POSTGRES_USER", "hire_do") %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD", "hire_do_development") %>
+  username: <%= ENV.fetch("POSTGRES_USER", "teplotec") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "teplotec_development") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
 
 development:
   <<: *default
-  database: <%= ENV.fetch("POSTGRES_DATABASE", "hire_do_development") %>
+  database: <%= ENV.fetch("POSTGRES_DATABASE", "teplotec_development") %>
 
-# This database is recreated by the test suite. Keep it separate from development.
 test:
   <<: *default
-  database: <%= ENV.fetch("POSTGRES_TEST_DATABASE", "hire_do_test") %>
+  database: <%= ENV.fetch("POSTGRES_TEST_DATABASE", "teplotec_test") %>
 
 production:
   primary:

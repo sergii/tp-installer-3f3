@@ -13,6 +13,7 @@ class Task < ApplicationRecord
   has_many :children, class_name: "Task", foreign_key: :parent_id, dependent: :nullify
   has_many :outgoing_dependencies, class_name: "TaskDependency", foreign_key: :predecessor_task_id, dependent: :destroy
   has_many :incoming_dependencies, class_name: "TaskDependency", foreign_key: :successor_task_id, dependent: :destroy
+  has_many :project_events, dependent: :nullify
 
   validates :title, presence: true, length: { maximum: 240 }
   validates :status, inclusion: { in: STATUSES }

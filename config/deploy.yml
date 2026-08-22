@@ -1,12 +1,35 @@
-service: teplotec_installer
-image: teplotec_installer
+service: teplotec_project
+image: sergii/tp-installer-3f3
 
 servers:
   web:
-    - 192.168.0.1
+    - ssh.teplotec.com
+
+ssh:
+  user: root
+  keys:
+    - ~/.ssh/teplotec
+  forward_agent: false
+  proxy_command: "cloudflared access ssh --hostname ssh.teplotec.com"
 
 registry:
-  server: localhost:5555
+  server: ghcr.io
+  username: sergii
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+proxy:
+  host: project.teplotec.com
+  app_port: 80
+  ssl: false
+  forward_headers: true
+  healthcheck:
+    path: /up
+  run:
+    http_port: 3001
+    https_port: 3443
+    bind_ips:
+      - 127.0.0.1
 
 env:
   secret:
@@ -17,6 +40,7 @@ env:
     - CABLE_DATABASE_URL
   clear:
     SOLID_QUEUE_IN_PUMA: true
+    RAILS_LOG_LEVEL: info
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
@@ -25,13 +49,25 @@ aliases:
   dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
 
 volumes:
-  - "teplotec_installer_storage:/rails/storage"
+  - "teplotec_project_storage:/rails/storage"
 
 asset_path: /rails/public
 
 builder:
   arch: amd64
-  cache:
-    type: registry
-    image: your-user/teplotec-installer-build-cache
-    options: mode=max
+
+accessories:
+  postgres:
+    service: teplotec-project-postgres
+    image: postgres:18.4
+    host: ssh.teplotec.com
+    env:
+      clear:
+        POSTGRES_USER: teplotec
+        POSTGRES_DB: teplotec_project
+      secret:
+        - POSTGRES_PASSWORD:PROJECT_DB_PASSWORD
+    directories:
+      - /opt/teplotec/project/postgresql:/var/lib/postgresql
+    files:
+      - config/postgres/init-databases.sql:/docker-entrypoint-initdb.d/10-create-databases.sql:ro

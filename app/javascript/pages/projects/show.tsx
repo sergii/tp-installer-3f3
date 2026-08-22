@@ -123,7 +123,7 @@ export default function ProjectShow({
           </div>
         </div>
 
-        <nav className="bg-muted/30 flex gap-1 overfow-x-auto rounded-lg border p-1">
+        <nav className="bg-muted/30 flex gap-1 overflow-x-auto rounded-lg border p-1">
           {views.map((item) => (
             <Link
               key={item}
@@ -163,7 +163,7 @@ export default function ProjectShow({
           </button>
         </form>
 
-        {(view === "overview" || view === "list" |x view === "today") && (
+        {(view === "overview" || view === "list" || view === "today") && (
           <div className="bg-card overflow-hidden rounded-xl border">
             <div className="bg-muted/30 text-muted-foreground grid grid-cols-[1fr_140px_80px_120px] gap-3 border-b px-4 py-2 text-xs font-medium tracking-wide uppercase">
               <span>Task</span>

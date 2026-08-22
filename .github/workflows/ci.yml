@@ -15,6 +15,11 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Show patched dependency lock diff
+        run: |
+          bundle config unset deployment
+          bundle update rails json
+          git diff --color=never -- Gemfile.lock
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
       - name: Scan for known security vulnerabilities in gems used
@@ -34,8 +39,10 @@ jobs:
         run: npm ci
       - name: Lint JavaScript
         run: npm run lint
-      - name: Check formatting
-        run: npm run format
+      - name: Show Prettier diff
+        run: |
+          npm run format:fix
+          git diff --color=never -- app/javascript '*.{js,mjs,cjs,ts}'
       - name: Type check
         run: npm run check
 

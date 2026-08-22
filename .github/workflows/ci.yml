@@ -24,6 +24,13 @@ jobs:
       - name: Scan for known security vulnerabilities in gems used
         run: bin/bundler-audit
 
+      - name: Validate Kamal deployment configuration
+        env:
+          KAMAL_REGISTRY_PASSWORD: ci-placeholder
+          PROJECT_DB_PASSWORD: ci-placeholder
+          RAILS_MASTER_KEY: ci-placeholder
+        run: bin/kamal config >/dev/null
+
   lint_js:
     runs-on: ubuntu-latest
 

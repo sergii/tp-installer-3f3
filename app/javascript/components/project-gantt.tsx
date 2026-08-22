@@ -1,5 +1,5 @@
-import { useMemo } from "react"
 import { addDays, startOfDay } from "date-fns"
+import { useMemo } from "react"
 
 import { Gantt } from "@/components/reui/gantt/gantt"
 import { GanttNav } from "@/components/reui/gantt/gantt-nav"
@@ -40,7 +40,10 @@ export function ProjectGantt({ tasks }: { tasks: ProjectTask[] }) {
   const events = useMemo<GanttEvent[]>(
     () =>
       tasks.map((task) => {
-        const start = parseDate(task.start_on) ?? parseDate(task.due_on) ?? startOfDay(new Date())
+        const start =
+          parseDate(task.start_on) ??
+          parseDate(task.due_on) ??
+          startOfDay(new Date())
         const due = parseDate(task.due_on)
         const end = due && due >= start ? addDays(due, 1) : addDays(start, 1)
 

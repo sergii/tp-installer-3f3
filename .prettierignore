@@ -1,3 +1,4 @@
 build
 coverage
+app/javascript/components/reui
 app/javascript/routes

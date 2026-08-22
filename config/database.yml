@@ -31,11 +31,14 @@ production:
     <<: *default
     url: <%= production_database_url.call("CACHE_DATABASE_URL") if production_database_url %>
     migrations_paths: db/cache_migrate
+    schema_format: ruby
   queue:
     <<: *default
     url: <%= production_database_url.call("QUEUE_DATABASE_URL") if production_database_url %>
     migrations_paths: db/queue_migrate
+    schema_format: ruby
   cable:
     <<: *default
     url: <%= production_database_url.call("CABLE_DATABASE_URL") if production_database_url %>
     migrations_paths: db/cable_migrate
+    schema_format: ruby

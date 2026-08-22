@@ -89,7 +89,7 @@ inside the Hetzner host and is mounted into `/var/lib/postgresql` in the contain
 
 ## Seed the isolated demo workspace
 
-After the first deploy, create a temporary password with at least 12 characters and run the demo seed inside the deployed Rails container:
+After the first deploy, choose a temporary password with at least 12 characters and run the demo seed inside the deployed Rails container:
 
 ```bash
 DEMO_PASSWORD='choose-a-temporary-demo-password'
@@ -165,7 +165,9 @@ bin/kamal console
 
 Cloudflare Access protects the outer boundary. Rails authentication remains enabled inside the application.
 
-Open `https://project.teplotec.com`, authenticate with the Cloudflare account, then sign in to the demo Rails account or create a separate real Rails account.
+Open `https://project.teplotec.com`, authenticate with one of the emails allowed by Cloudflare Access, then sign in to Rails as `demo.admin@teplotec.example` using the password supplied to `demo:seed`.
+
+The Cloudflare identity and Rails demo identity are intentionally separate in this first version. Later they can be joined by verifying the Cloudflare Access JWT and mapping its email directly to a Rails user.
 
 ## Repository transfer later
 

@@ -1,6 +1,8 @@
-import { FormEvent, useMemo } from "react"
+import { useMemo } from "react"
+import type { FormEvent } from "react"
 import { Head, Link, router, useForm } from "@inertiajs/react"
 
+import { ProjectGantt } from "@/components/project-gantt"
 import AppLayout from "@/layouts/app-layout"
 import type { BreadcrumbItem } from "@/types"
 
@@ -110,7 +112,7 @@ export default function ProjectShow({ project, tasks, view, views, taskStatuses,
           </div>
         )}
 
-        {view === "gantt" && <div className="rounded-xl border bg-card p-8 text-sm text-muted-foreground">ReUI Gantt is being wired directly to these Task records in the next layer. No duplicate planning model.</div>}
+        {view === "gantt" && <ProjectGantt tasks={tasks} />}
 
         {view === "timeline" && (
           <div className="rounded-xl border bg-card p-4">

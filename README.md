@@ -1,98 +1,78 @@
-# Inertia Rails React Starter Kit
+# TeploTEC Installation OS
 
-A modern full-stack starter application with Rails backend and React frontend using Inertia.js based on the [Laravel Starter Kit](https://github.com/laravel/react-starter-kit).
+Rails application for planning and operating TeploTEC geothermal installation projects.
 
-## About this repo
+## Stack
 
-This starter kit is generated output of [inertia-rails/generator](https://github.com/inertia-rails/generator):
-each generator release regenerates the app and opens an automated sync PR here, so most files in this repo
-are overwritten on every sync. **To contribute changes to the app itself, open a PR against the generator** —
-only this README and the deploy workflow are kit-owned.
+- Rails 8.1
+- PostgreSQL 18
+- Inertia.js + React 19 + TypeScript
+- Tailwind CSS 4
+- ReUI.io Gantt
+- Solid Cache, Solid Queue, and Solid Cable
 
-Prefer different options (framework, JavaScript instead of TypeScript, feature set)? Generate your own app:
+The project started from the Inertia Rails React Starter Kit. The starter auth, application shell, settings, and deployment foundation are intentionally retained; the previous hiring/ATS domain has been removed.
 
-```sh
-rails new myapp -m https://raw.githubusercontent.com/inertia-rails/generator/dist/template.rb
+## Domain
+
+The first vertical slice centers on one shared task model:
+
+- `Organization`
+- `Project`
+- `Task`
+- `TaskDependency`
+- `ProjectEvent`
+- `ProcessTemplate` and step/dependency templates
+- `KnowledgeEntity`, translations, and `SemanticLink`
+
+Dashboard, Today, List, Kanban, ReUI Gantt, Timeline, and Graph are different projections of the same project/task data. Gantt is not a second scheduling database.
+
+## Local setup
+
+```bash
+docker compose up -d db
+bin/setup
 ```
 
-## Features
+Open http://localhost:3000.
 
-- [Inertia Rails](https://inertia-rails.dev) & [Vite Rails](https://vite-ruby.netlify.app) setup
-- [React](https://react.dev) frontend with TypeScript & [shadcn/ui](https://ui.shadcn.com) component library
-- User authentication system (based on [Authentication Zero](https://github.com/lazaronixon/authentication-zero))
-- [Kamal](https://kamal-deploy.org/) for deployment
-- Optional SSR support
+PostgreSQL runs on `localhost:5433` with development defaults:
 
-See also:
-- [Svelte Starter Kit](https://github.com/inertia-rails/svelte-starter-kit) for Inertia Rails with Svelte
-- [Vue Starter Kit](https://github.com/inertia-rails/vue-starter-kit) for Inertia Rails with Vue
+```text
+database: teplotec_development
+user:     teplotec
+password: teplotec_development
+```
 
-<a href="https://evilmartians.com/?utm_source=inertia-rails-react-starter-kit&utm_campaign=project_page">
-<img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Built by Evil Martians" width="236" height="54">
-</a>
+If this checkout previously used the old `hire_do` Docker volume, recreate the local database once:
 
-## Setup
+```bash
+docker compose down -v
+docker compose up -d db
+bin/setup
+```
 
-1. Clone this repository
-2. Start PostgreSQL:
-   ```bash
-   docker compose up -d db
-   ```
-3. Setup dependencies & run the server:
-   ```bash
-   bin/setup
-   ```
-4. Open http://localhost:3000
+Development seeds create a TeploTEC workspace, a geothermal demo project, and a small installation schedule. Defaults can be overridden with `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`.
 
-The Compose service runs PostgreSQL 18.4 on `localhost:5433`. Development defaults
-are `hire_do` / `hire_do_development` with database `hire_do_development`; override
-them with `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`,
-`POSTGRES_DATABASE`, and `POSTGRES_TEST_DATABASE` as needed. Stop it with `docker compose down` (add `-v` to
-also remove its local database volume).
+## Database security
 
-## Production database configuration
+Organization-owned domain tables use PostgreSQL row-level-security policies keyed by `app.current_organization`. Rails uses `db/structure.sql` as the canonical schema format because RLS policies are not represented by `schema.rb`.
 
-Production uses separate PostgreSQL databases for the primary application, Solid
-Cache, Solid Queue, and Solid Cable. Set `DATABASE_URL`, `CACHE_DATABASE_URL`,
-`QUEUE_DATABASE_URL`, and `CABLE_DATABASE_URL`; all four are required in production.
-These databases can share one PostgreSQL server; they do not require four PostgreSQL
-instances. The configured deployment passes the values as secrets, and `db:prepare`
-applies each database's migrations.
+Local Docker and CI currently run with the database owner for simplicity. A restricted `NOBYPASSRLS` runtime role should be added before production deployment so RLS is exercised as a hard database boundary rather than only as application structure.
 
-## Enabling SSR
+## Production
 
-This starter kit ships SSR-ready but turned off. The Puma plugin
-([`plugin :inertia_ssr`](config/puma.rb)) manages the Node.js renderer
-in-process — no separate accessory required.
+Production keeps separate database URLs for the primary app, Solid Cache, Solid Queue, and Solid Cable:
 
-To turn SSR on, flip two switches:
+```text
+DATABASE_URL
+CACHE_DATABASE_URL
+QUEUE_DATABASE_URL
+CABLE_DATABASE_URL
+```
 
-1. Set `config.ssr_enabled = true` in [`config/initializers/inertia_rails.rb`](config/initializers/inertia_rails.rb).
-2. Build the image with `SSR_ENABLED=true` so the SSR bundle ships
-   alongside the app. Two ways:
-
-   **With Kamal** — add to [`config/deploy.yml`](config/deploy.yml):
-
-   ```yml
-   builder:
-     args:
-       SSR_ENABLED: true
-   ```
-
-   **By hand** — pass the build arg directly:
-
-   ```bash
-   docker build --build-arg SSR_ENABLED=true -t react_starter_kit .
-   ```
-
-That's it. Puma boots the SSR process automatically when
-`ssr_enabled` is true, and Inertia falls back to client-side
-rendering if it ever fails (see `config.on_ssr_error`).
-
-In development, flipping `ssr_enabled` is enough — Vite serves SSR
-via its own dev endpoint with HMR. The Docker build arg only matters
-for production images.
+They may point to separate databases on the same PostgreSQL server.
 
 ## License
 
-The project is available as open source under the terms of the [MIT License](LICENSE).
+MIT. See [LICENSE](LICENSE).

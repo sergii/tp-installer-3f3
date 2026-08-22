@@ -12,6 +12,10 @@ class User < ApplicationRecord
   end
 
   has_many :sessions, dependent: :destroy
+  has_many :memberships, dependent: :destroy
+  has_many :organizations, through: :memberships
+  has_many :created_tasks, class_name: "Task", foreign_key: :created_by_id, dependent: :nullify
+  has_many :assigned_tasks, class_name: "Task", foreign_key: :assigned_to_id, dependent: :nullify
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

@@ -1,7 +1,6 @@
 import { Link } from "@inertiajs/react"
-import { BookOpen, Folder, LayoutGrid } from "lucide-react"
+import { CalendarCheck2, FolderKanban, LayoutDashboard, Network } from "lucide-react"
 
-import { NavFooter } from "@/components/nav-footer"
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import {
@@ -13,30 +12,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { dashboard } from "@/routes"
 import type { NavItem } from "@/types"
 
 import AppLogo from "./app-logo"
 
 const mainNavItems: NavItem[] = [
-  {
-    title: "Dashboard",
-    href: dashboard.index().url,
-    icon: LayoutGrid,
-  },
-]
-
-const footerNavItems: NavItem[] = [
-  {
-    title: "Repository",
-    href: "https://github.com/inertia-rails/react-starter-kit",
-    icon: Folder,
-  },
-  {
-    title: "Documentation",
-    href: "https://inertia-rails.dev",
-    icon: BookOpen,
-  },
+  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { title: "Today", href: "/today", icon: CalendarCheck2 },
+  { title: "Projects", href: "/projects", icon: FolderKanban },
+  { title: "Knowledge", href: "/knowledge", icon: Network },
 ]
 
 export function AppSidebar() {
@@ -46,7 +30,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href={dashboard.index()} prefetch>
+              <Link href="/dashboard" prefetch>
                 <AppLogo />
               </Link>
             </SidebarMenuButton>
@@ -59,7 +43,6 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavFooter items={footerNavItems} className="mt-auto" />
         <NavUser />
       </SidebarFooter>
     </Sidebar>

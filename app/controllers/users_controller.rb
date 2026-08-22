@@ -11,15 +11,18 @@ class UsersController < InertiaController
   def create
     @user = User.new(user_params)
 
-    if @user.save
-      session_record = @user.sessions.create!
-      cookies.signed.permanent[:session_token] = { value: session_record.id, httponly: true }
-
-      send_email_verification
-      redirect_to dashboard_path, notice: "Welcome! You have signed up successfully"
-    else
-      redirect_to sign_up_path, inertia: { errors: @user.errors }
+    User.transaction do
+      @user.save!
+      organization = Organization.create!(name: "#{@user.name}'s workspace", slug: available_slug(@user.name))
+      Membership.create!(user: @user, organization:, role: "owner")
     end
+
+    session_record = @user.sessions.create!
+    cookies.signed.permanent[:session_token] = { value: session_record.id, httponly: true }
+    send_email_verification
+    redirect_to dashboard_path, notice: "Welcome! You have signed up successfully"
+  rescue ActiveRecord::RecordInvalid => error
+    redirect_to sign_up_path, inertia: { errors: error.record.errors }
   end
 
   def destroy
@@ -37,6 +40,17 @@ class UsersController < InertiaController
 
   def user_params
     params.permit(:email, :name, :password, :password_confirmation)
+  end
+
+  def available_slug(name)
+    base = name.parameterize.presence || "workspace"
+    slug = base
+    counter = 2
+    while Organization.exists?(slug:)
+      slug = "#{base}-#{counter}"
+      counter += 1
+    end
+    slug
   end
 
   def send_email_verification

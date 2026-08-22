@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
   before_action :set_current_request_details
   before_action :authenticate
+  around_action :with_current_organization
 
   private
 
@@ -27,5 +27,32 @@ class ApplicationController < ActionController::Base
   def set_current_request_details
     Current.user_agent = request.user_agent
     Current.ip_address = request.ip
+  end
+
+  def require_current_organization
+    return if Current.organization
+
+    redirect_to root_path, alert: "No active workspace is available"
+  end
+
+  def with_current_organization
+    membership = selected_membership
+    return yield unless membership
+
+    Current.membership = membership
+    Current.organization = membership.organization
+    connection = ActiveRecord::Base.connection
+    connection.execute("SELECT set_config('app.current_organization', #{connection.quote(membership.organization_id.to_s)}, false)")
+    yield
+  ensure
+    connection&.execute("RESET app.current_organization") if membership
+    Current.organization = nil
+    Current.membership = nil
+  end
+
+  def selected_membership
+    return unless Current.user
+
+    Current.user.memberships.active.includes(:organization).first
   end
 end
